@@ -1,6 +1,7 @@
 package com.jyn.pingtest.ui.main
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,10 +10,9 @@ import com.jyn.pingtest.data.UrlDetail
 import com.jyn.pingtest.databinding.LayoutItemUrlBinding
 import com.jyn.pingtest.ui.main.UrlAdapter.MyViewHolder
 
-class UrlAdapter(var items: List<UrlDetail>) : RecyclerView.Adapter<MyViewHolder>() {
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun setList(urlItems: List<UrlDetail>) {
+class UrlAdapter() : RecyclerView.Adapter<MyViewHolder>() {
+    private var items = mutableListOf<UrlDetail>()
+    fun setList(urlItems: MutableList<UrlDetail>) {
         this.items = urlItems
         notifyDataSetChanged()
     }
@@ -24,8 +24,8 @@ class UrlAdapter(var items: List<UrlDetail>) : RecyclerView.Adapter<MyViewHolder
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.binding.urlContent.text = ""
-        holder.binding.urlSpeed.text = ""
+        holder.binding.urlContent.text = items[position].url
+        holder.binding.urlSpeed.text = "${items[position].speed}ms"
     }
 
     override fun getItemCount(): Int {

@@ -13,7 +13,7 @@ interface UrlDao {
     @Insert
     fun insertUrl(item: UrlDetail)
 
-    @Upsert
+    @Insert
     fun insertUrlList(items: List<UrlDetail>)
 
     @Delete

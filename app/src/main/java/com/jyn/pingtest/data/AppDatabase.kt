@@ -25,12 +25,6 @@ abstract class AppDatabase:RoomDatabase() {
                     object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
-                            // 初始化数据
-                            val initList = mutableListOf<UrlDetail>()
-                            initList.add(UrlDetail(position = 1,url="www.vk.com"))
-                            initList.add(UrlDetail(position = 2,url="detik.com"))
-                            initList.add(UrlDetail(position = 3,url="www.baidu.com"))
-                            getInstance(context).urlDao().insertUrlList(initList)
                         }
                     }
                 )

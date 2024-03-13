@@ -1,6 +1,8 @@
 package com.jyn.pingtest.ui.main
 
 import android.app.Application
+import android.os.Debug
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -16,13 +18,17 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
 
      var urlsLiveData: MutableLiveData<List<UrlDetail>> = MutableLiveData()
 
-    init {
-        pingAllUrl()
-    }
 
-    private fun pingAllUrl() {
+     fun pingAllUrl() {
+
         viewModelScope.launch(Dispatchers.IO) {
+            val initList = mutableListOf<UrlDetail>()
+            initList.add(UrlDetail(position = 1,url="www.vk.com"))
+            initList.add(UrlDetail(position = 2,url="detik.com"))
+            initList.add(UrlDetail(position = 3,url="www.baidu.com"))
+            AppDatabase.getInstance(application).urlDao().insertUrlList(initList)
             val urls = AppDatabase.getInstance(getApplication()).urlDao().getAllUrlItems()
+            Log.d("jyntest","当前列表"+urls.size)
             val listDeferred = mutableListOf<Deferred<UrlDetail>>()
             urls.forEach {
                 val deferred = viewModelScope.async {
@@ -34,14 +40,14 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
             listDeferred.forEach {
                 newData.add(it.await())
             }
+            Log.d("jyntest","刷新列表"+newData.size)
             urlsLiveData.postValue(newData)
         }
-
     }
 
     private suspend fun getPingResult(urlDetail: UrlDetail): UrlDetail {
-        delay(1000L)
-        urlDetail.speed = 10
+      val speed =  com.jyn.pingtest.PingUtil.ping(urlDetail.url)
+        urlDetail.speed = speed
         return urlDetail
     }
 

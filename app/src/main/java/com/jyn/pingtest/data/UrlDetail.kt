@@ -9,7 +9,6 @@ data class UrlDetail(
     @PrimaryKey(autoGenerate = true) var id: Int = 0,
     var position: Int,
     var url: String,
-    @Ignore var speed: Int = 0,
 ) {
-
+    @Ignore var speed: String = "0ms"
 }

@@ -1,11 +1,14 @@
 package com.jyn.pingtest.ui.main
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jyn.pingtest.PingUtil
 import com.jyn.pingtest.databinding.LayoutMainBinding
 import com.jyn.pingtest.ui.add.AddUrlActivity
 
@@ -23,23 +26,24 @@ class MainActivity : ComponentActivity() {
         initView()
         livedataObserve()
         addViewListener()
+        listViewModel.pingAllUrl()
     }
 
     private fun initView() {
-        itemsAdapter = UrlAdapter(mutableListOf())
+        itemsAdapter = UrlAdapter()
         binding.rlvItems.layoutManager = LinearLayoutManager(this)
         binding.rlvItems.adapter = itemsAdapter
     }
 
     private fun livedataObserve() {
         listViewModel.urlsLiveData.observe(this) {
-            itemsAdapter.setList(it)
+            itemsAdapter.setList(it.toMutableList())
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     private fun addViewListener() {
         binding.btnRefresh.setOnClickListener {
-
         }
         binding.btnGotoAdd.setOnClickListener {
             startActivity(Intent(this@MainActivity, AddUrlActivity::class.java))
