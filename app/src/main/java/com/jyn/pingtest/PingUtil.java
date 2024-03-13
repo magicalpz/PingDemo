@@ -18,14 +18,14 @@ public class PingUtil {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;
             String delayString = "";
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             boolean success = false;
             while (null != (line = reader.readLine())) {
                 sb.append(line);
                if (line.contains("time=")){
                    int startIndex = line.indexOf("time=");
                    int endIndex = line.indexOf("ms");
-                   delayString = line.substring(startIndex+5,endIndex+2);
+                   delayString = line.substring(startIndex+5,endIndex);
                    success = true;
                    break;
                }

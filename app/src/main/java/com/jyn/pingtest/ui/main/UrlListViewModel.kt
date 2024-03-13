@@ -1,51 +1,48 @@
 package com.jyn.pingtest.ui.main
 
 import android.app.Application
-import android.os.Debug
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.jyn.pingtest.data.AppDatabase
 import com.jyn.pingtest.data.UrlDetail
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 class UrlListViewModel(private val application: Application) : AndroidViewModel(application) {
 
-     var urlsLiveData: MutableLiveData<List<UrlDetail>> = MutableLiveData()
 
+    var urlsLiveData: MutableLiveData<List<UrlDetail>> = MutableLiveData()
 
      fun pingAllUrl() {
-
         viewModelScope.launch(Dispatchers.IO) {
-            val initList = mutableListOf<UrlDetail>()
-            initList.add(UrlDetail(position = 1,url="www.vk.com"))
-            initList.add(UrlDetail(position = 2,url="detik.com"))
-            initList.add(UrlDetail(position = 3,url="www.baidu.com"))
-            AppDatabase.getInstance(application).urlDao().insertUrlList(initList)
             val urls = AppDatabase.getInstance(getApplication()).urlDao().getAllUrlItems()
-            Log.d("jyntest","当前列表"+urls.size)
-            val listDeferred = mutableListOf<Deferred<UrlDetail>>()
+            urlsLiveData.postValue(urls)
             urls.forEach {
-                val deferred = viewModelScope.async {
-                    getPingResult(it)
+                viewModelScope.launch(Dispatchers.IO) {
+                    val newData =   getPingResult(it)
+                    urlsLiveData.value?.toMutableList()?.set(newData.position,newData)
+                    urlsLiveData.postValue(urlsLiveData.value)
                 }
-                listDeferred.add(deferred)
             }
-            val newData: MutableList<UrlDetail> = mutableListOf()
-            listDeferred.forEach {
-                newData.add(it.await())
-            }
-            Log.d("jyntest","刷新列表"+newData.size)
-            urlsLiveData.postValue(newData)
         }
     }
 
-    private suspend fun getPingResult(urlDetail: UrlDetail): UrlDetail {
+    fun addNewUrl(url:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            val urlDetail = UrlDetail(url = url, position = urlsLiveData.value?.size?:0)
+            AppDatabase.getInstance(application).urlDao().insertUrl(urlDetail)
+            val currentList: MutableList<UrlDetail> =urlsLiveData.value?.toMutableList()?: mutableListOf()
+            currentList.add(urlDetail)
+            urlsLiveData.postValue(currentList)
+            val newData =  getPingResult(urlDetail)
+            urlsLiveData.value?.toMutableList()?.set(newData.position,newData)
+            urlsLiveData.postValue(urlsLiveData.value)
+        }
+    }
+
+    private fun getPingResult(urlDetail: UrlDetail): UrlDetail {
       val speed =  com.jyn.pingtest.PingUtil.ping(urlDetail.url)
         urlDetail.speed = speed
         return urlDetail
