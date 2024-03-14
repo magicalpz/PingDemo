@@ -53,7 +53,15 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
 
     fun deleteItemByPosition(position: Int) {
         viewModelScope.launch(Dispatchers.IO) {
+            Log.d("jyntest", "位置 " + position)
+            val currentList = urlsLiveData.value?.toMutableList()
             val deleteItem = urlsLiveData.value?.toMutableList()?.get(position)
+            currentList?.let {
+                it.removeAt(position)
+                urlsLiveData.postValue(it)
+            }
+
+            Log.d("jyntest", "删除的条目 " + deleteItem)
             deleteItem?.let {
                 AppDatabase.getInstance(application).urlDao()
                     .deleteUrlItem(it)

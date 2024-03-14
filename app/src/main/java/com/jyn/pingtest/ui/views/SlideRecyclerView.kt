@@ -135,6 +135,13 @@ class SlideRecyclerView : RecyclerView {
                         if (mRightListener != null) {
                             //删除
                             mRightListener?.onRightClick(curSelectPosition)
+                            if (mLastItemLayout != null && mMoveWidth > 0) {
+                                //将Item右移，恢复原位
+                                scrollRight(mLastItemLayout, 0 - mMoveWidth)
+                                //清空变量
+                                mHiddenWidth = 0
+                                mMoveWidth = 0
+                            }
                         }
                     }
 
