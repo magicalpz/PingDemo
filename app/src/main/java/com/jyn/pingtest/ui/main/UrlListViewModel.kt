@@ -1,8 +1,6 @@
 package com.jyn.pingtest.ui.main
 
 import android.app.Application
-import android.os.Debug
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -11,10 +9,10 @@ import com.jyn.pingtest.data.AppDatabase
 import com.jyn.pingtest.data.UrlDetail
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Collections
 
 
 class UrlListViewModel(private val application: Application) : AndroidViewModel(application) {
-
     var urlsLiveData: MutableLiveData<List<UrlDetail>> = MutableLiveData()
 
     /**
@@ -53,18 +51,46 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
 
     fun deleteItemByPosition(position: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            Log.d("jyntest", "位置 " + position)
             val currentList = urlsLiveData.value?.toMutableList()
             val deleteItem = urlsLiveData.value?.toMutableList()?.get(position)
             currentList?.let {
                 it.removeAt(position)
                 urlsLiveData.postValue(it)
             }
-
-            Log.d("jyntest", "删除的条目 " + deleteItem)
             deleteItem?.let {
                 AppDatabase.getInstance(application).urlDao()
                     .deleteUrlItem(it)
+            }
+        }
+    }
+
+    //更换元素中某个Item的位置
+    private var swapList = mutableListOf<UrlDetail>()
+    fun swapItem(oldPosition: Int, targetPosition: Int) {
+        viewModelScope.launch(Dispatchers.Default) {
+            if (swapList.isEmpty()) {
+                urlsLiveData.value?.let {
+                    swapList = it.toMutableList()
+                }
+            }
+            if (targetPosition < 0 || targetPosition > swapList.size - 1) {
+                return@launch
+            }
+            swapList.let {
+                Collections.swap(it, oldPosition, targetPosition)
+                swapList = it
+            }
+        }
+    }
+
+    fun swapEnd() {
+        viewModelScope.launch(Dispatchers.IO) {
+            swapList.let {
+                it.forEachIndexed { index, urlDetail ->
+                    urlDetail.position = index
+                }
+                AppDatabase.getInstance(application).urlDao().updateUrlList(it)
+                swapList.clear()
             }
         }
     }

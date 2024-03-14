@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.jyn.pingtest.data.AppDatabase.Companion.DB_INIT_WORK_ID
 import com.jyn.pingtest.databinding.LayoutMainBinding
 import com.jyn.pingtest.ui.add.AddUrlActivity
 import com.jyn.pingtest.ui.views.ItemTouchDelegate
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
      */
     private fun initDb() {
         WorkManager.getInstance(this)
-            .getWorkInfoByIdLiveData(UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c"))
+            .getWorkInfoByIdLiveData(UUID.fromString(DB_INIT_WORK_ID))
             .observe(this) {
                 if (it.state == WorkInfo.State.SUCCEEDED) {
                     listViewModel.pingAllUrl()
@@ -70,14 +70,11 @@ class MainActivity : ComponentActivity() {
         val itemTouchCallback = ItemTouchHelperCallback(object : ItemTouchDelegate {
 
             override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-                //  if (mData.size > 1 && srcPosition < mData.size && targetPosition < mData.size) {
-                // 更换数据源中的数据Item的位置
-                // Collections.swap(mData, srcPosition, targetPosition)
                 // 更新UI中的Item的位置，主要是给用户看到交互效果
                 itemsAdapter.notifyItemMoved(srcPosition, targetPosition)
+                // 更新数据库中的列表顺序
+                listViewModel.swapItem(srcPosition, targetPosition)
                 return true
-                //    }
-                //    return false
             }
 
             override fun uiOnDragging(viewHolder: RecyclerView.ViewHolder?) {
@@ -89,6 +86,7 @@ class MainActivity : ComponentActivity() {
                 viewHolder: RecyclerView.ViewHolder
             ) {
                 viewHolder.itemView.setBackgroundColor(Color.WHITE)
+                listViewModel.swapEnd()
             }
 
         })
@@ -101,8 +99,9 @@ class MainActivity : ComponentActivity() {
 
     private fun livedataObserve() {
         listViewModel.urlsLiveData.observe(this) {
-            Log.d("jyntest", "列表更新" + it)
-            itemsAdapter.setList(it?.toMutableList() ?: mutableListOf())
+            it?.let {
+                itemsAdapter.setList(it.toMutableList())
+            }
         }
     }
 

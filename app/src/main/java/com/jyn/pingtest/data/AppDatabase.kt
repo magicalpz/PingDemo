@@ -17,11 +17,13 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 @Database(entities = [UrlDetail::class], version = 1, exportSchema = false)
-abstract class AppDatabase:RoomDatabase() {
-    abstract fun urlDao():UrlDao
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun urlDao(): UrlDao
 
-    companion object{
-        @Volatile private var instance: AppDatabase? = null
+    companion object {
+        @Volatile
+        private var instance: AppDatabase? = null
+        const val DB_INIT_WORK_ID = "5fc03087-d265-11e7-b8c6-83e29cd24f4c"
 
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
@@ -36,7 +38,7 @@ abstract class AppDatabase:RoomDatabase() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
                             val request = OneTimeWorkRequestBuilder<DataBaseWorker>()
-                                .setId(UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c"))
+                                .setId(UUID.fromString(DB_INIT_WORK_ID))
                                 .build()
                             WorkManager.getInstance(context).enqueue(request)
                         }

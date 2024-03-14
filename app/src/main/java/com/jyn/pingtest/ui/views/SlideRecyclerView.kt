@@ -133,8 +133,7 @@ class SlideRecyclerView : RecyclerView {
                     mItemDelete = viewHolder.binding.delete
                     mItemDelete?.setOnClickListener {
                         if (mRightListener != null) {
-                            //删除
-                            mRightListener?.onRightClick(curSelectPosition)
+                            //删除先复位
                             if (mLastItemLayout != null && mMoveWidth > 0) {
                                 //将Item右移，恢复原位
                                 scrollRight(mLastItemLayout, 0 - mMoveWidth)
@@ -142,6 +141,8 @@ class SlideRecyclerView : RecyclerView {
                                 mHiddenWidth = 0
                                 mMoveWidth = 0
                             }
+                            //删除
+                            mRightListener?.onRightClick(curSelectPosition)
                         }
                     }
 

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -21,4 +22,7 @@ interface UrlDao {
 
     @Query("select * from url_detail order by position asc, id asc")
     fun getAllUrlItems(): MutableList<UrlDetail>
+
+    @Update
+    fun updateUrlList(items: List<UrlDetail>)
 }
