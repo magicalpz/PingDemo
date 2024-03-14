@@ -25,7 +25,7 @@
 
     </Toolbar>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <com.jyn.pingtest.ui.views.SlideRecyclerView
         android:id="@+id/rlv_items"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
