@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = LayoutMainBinding.inflate(LayoutInflater.from(this))
+        statusBarSet()
         setContentView(binding.root)
         listViewModel = ViewModelProvider(this)[UrlListViewModel::class.java]
         livedataObserve()
@@ -40,6 +42,13 @@ class MainActivity : ComponentActivity() {
         initView()
         addViewListener()
         listViewModel.pingAllUrl()
+    }
+
+    private fun statusBarSet() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        window.statusBarColor = Color.TRANSPARENT
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+        insetsController.isAppearanceLightStatusBars = true
     }
 
     /**
