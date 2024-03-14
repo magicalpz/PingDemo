@@ -33,6 +33,9 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
         }
     }
 
+    /**
+     * 新增一条新的URL
+     */
     fun addNewUrl(url: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val urlDetail = UrlDetail(url = url, position = urlsLiveData.value?.size ?: 0)
@@ -48,7 +51,9 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
         }
     }
 
-
+    /**
+     * 删除某条记录
+     */
     fun deleteItemByPosition(position: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val currentList = urlsLiveData.value?.toMutableList()
@@ -64,7 +69,10 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
         }
     }
 
-    //更换元素中某个Item的位置
+    /**
+     * 更换元素中某个Item的位置
+     * 此处只交换列表，不更新数据库
+     */
     private var swapList = mutableListOf<UrlDetail>()
     fun swapItem(oldPosition: Int, targetPosition: Int) {
         viewModelScope.launch(Dispatchers.Default) {
