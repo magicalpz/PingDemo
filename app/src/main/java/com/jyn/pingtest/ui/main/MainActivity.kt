@@ -92,7 +92,6 @@ class MainActivity : ComponentActivity() {
                         "取消"
                     ) { dialog, which -> dialog.dismiss() }
                     .show()
-
             }
         })
         // 实现拖拽

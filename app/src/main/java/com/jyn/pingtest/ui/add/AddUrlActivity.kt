@@ -45,6 +45,13 @@ class AddUrlActivity : ComponentActivity() {
             Toast.makeText(this, "域名不能为空", Toast.LENGTH_SHORT).show()
             return
         }
+        val regex =
+            "^(?=^.{3,255}\$)[a-zA-Z0-9][-a-zA-Z0-9]{0,62}(\\.[a-zA-Z0-9][-a-zA-Z0-9]{0,62})+\$".toRegex()
+        val match = regex.matches(inputUlr)
+        if (!match) {
+            Toast.makeText(this, "域名格式不正确", Toast.LENGTH_SHORT).show()
+            return
+        }
         Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show()
         setResult(Activity.RESULT_OK, intent.putExtra("ADD_URL", inputUlr))
         finish()
