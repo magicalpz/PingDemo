@@ -54,11 +54,15 @@ class MainActivity : ComponentActivity() {
     /**
      * 监听数据初始化逻辑，
      */
+    private var isInitDb = false
     private fun initDb() {
         WorkManager.getInstance(this)
             .getWorkInfoByIdLiveData(UUID.fromString(DB_INIT_WORK_ID))
             .observe(this) {
-                if (it.state == WorkInfo.State.SUCCEEDED) {
+                if (it.state == WorkInfo.State.RUNNING) {
+                    isInitDb = true
+                }
+                if (isInitDb && it.state == WorkInfo.State.SUCCEEDED) {
                     listViewModel.pingAllUrl()
                 }
             }
@@ -79,7 +83,7 @@ class MainActivity : ComponentActivity() {
         val itemTouchCallback = ItemTouchHelperCallback(object : ItemTouchDelegate {
 
             override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
-                // 更新UI中的Item的位置，主要是给用户看到交互效果
+                // 更新UI中的Item，先实现交互效果
                 itemsAdapter.notifyItemMoved(srcPosition, targetPosition)
                 // 更新数据库中的列表顺序
                 listViewModel.swapItem(srcPosition, targetPosition)
