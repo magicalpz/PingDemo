@@ -21,6 +21,9 @@ class AddUrlActivity : ComponentActivity() {
         binding.btnAdd.setOnClickListener {
             saveUrlAndBackHomeView()
         }
+        binding.btnBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     /**
@@ -33,7 +36,7 @@ class AddUrlActivity : ComponentActivity() {
             return
         }
         Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show()
-        setResult(Activity.RESULT_OK,intent.putExtra("ADD_URL",inputUlr))
+        setResult(Activity.RESULT_OK, intent.putExtra("ADD_URL", inputUlr))
         finish()
     }
 }

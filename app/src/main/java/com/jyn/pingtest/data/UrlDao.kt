@@ -19,6 +19,6 @@ interface UrlDao {
     @Delete
     fun deleteUrlItem(item: UrlDetail)
 
-    @Query("select * from url_detail order by position asc")
+    @Query("select * from url_detail order by position asc, id asc")
     fun getAllUrlItems():MutableList<UrlDetail>
 }

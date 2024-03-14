@@ -146,14 +146,12 @@ class SlideRecyclerView : RecyclerView {
             MotionEvent.ACTION_MOVE -> {
                 xMove = x
                 yMove = y
-                val dx: Int = xMove - xDown //为负时：手指向左滑动；为正时：手指向右滑动。这与Android的屏幕坐标定义有关
-                val dy: Int = yMove - yDown //
+                val dx: Int = xMove - xDown
+                val dy: Int = yMove - yDown
                 //左滑
                 if (dx < 0 && abs(dx.toDouble()) > mTouchSlop && abs(dy.toDouble()) < mTouchSlop) {
-                    var newScrollX = abs(dx.toDouble()).toInt()
-                    if (mMoveWidth >= mHiddenWidth) { //超过了，不能再移动了
-                        newScrollX = 0
-                    } else if (mMoveWidth + newScrollX > mHiddenWidth) { //这次要超了，
+                    var newScrollX = abs(dx)
+                    if (mMoveWidth + newScrollX > mHiddenWidth) {
                         newScrollX = mHiddenWidth - mMoveWidth
                     }
                     //左滑，每次滑动手指移动的距离

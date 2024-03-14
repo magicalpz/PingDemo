@@ -1,7 +1,5 @@
 package com.jyn.pingtest;
 
-import android.util.Log;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +19,7 @@ public class PingUtil {
             boolean success = false;
             while (null != (line = reader.readLine())) {
                 if (line.contains("packet loss")) {
-                    sb.append(line);
+                    sb.append(line.substring(line.indexOf(",") + 1));
                 }
                 if (line.contains("time=")) {
                     int startIndex = line.indexOf("time=");

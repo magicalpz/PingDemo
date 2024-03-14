@@ -1,5 +1,7 @@
 package com.jyn.pingtest.ui.main
 
+import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -14,12 +16,18 @@ class UrlAdapter() : RecyclerView.Adapter<MyViewHolder>() {
         notifyDataSetChanged()
     }
 
+    fun removePositionItem(position: Int) {
+        items.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val binding =
             LayoutItemUrlBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MyViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.binding.urlContent.text = items[position].url
         holder.binding.urlSpeed.text = "${items[position].speed}ms"

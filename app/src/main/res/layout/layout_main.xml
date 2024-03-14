@@ -4,15 +4,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:background="@color/purple_500">
+        android:background="@color/teal_200">
 
         <ImageView
             android:id="@+id/btn_refresh"
             android:layout_width="36dp"
             android:layout_height="36dp"
+            android:layout_marginStart="16dp"
             android:src="@drawable/baseline_refresh_24" />
 
         <ImageView
@@ -20,10 +21,10 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_gravity="end"
-            android:layout_marginEnd="24dp"
+            android:layout_marginEnd="16dp"
             android:src="@drawable/baseline_add_24" />
 
-    </Toolbar>
+    </androidx.appcompat.widget.Toolbar>
 
     <com.jyn.pingtest.ui.views.SlideRecyclerView
         android:id="@+id/rlv_items"

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
@@ -19,6 +20,7 @@ import com.jyn.pingtest.ui.add.AddUrlActivity
 import com.jyn.pingtest.ui.views.ItemTouchDelegate
 import com.jyn.pingtest.ui.views.ItemTouchHelperCallback
 import com.jyn.pingtest.ui.views.ItemTouchHelperImpl
+import com.jyn.pingtest.ui.views.SlideRecyclerView
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
@@ -57,6 +59,13 @@ class MainActivity : ComponentActivity() {
         itemsAdapter = UrlAdapter()
         binding.rlvItems.layoutManager = LinearLayoutManager(this)
         binding.rlvItems.adapter = itemsAdapter
+        binding.rlvItems.setRightClickListener(object : SlideRecyclerView.OnRightClickListener {
+            override fun onRightClick(position: Int) {
+                //左滑删除操作
+                itemsAdapter.removePositionItem(position)
+                listViewModel.deleteItemByPosition(position)
+            }
+        })
         // 实现拖拽
         val itemTouchCallback = ItemTouchHelperCallback(object : ItemTouchDelegate {
 
@@ -79,7 +88,7 @@ class MainActivity : ComponentActivity() {
                 recyclerView: RecyclerView,
                 viewHolder: RecyclerView.ViewHolder
             ) {
-                viewHolder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+                viewHolder.itemView.setBackgroundColor(Color.WHITE)
             }
 
         })
