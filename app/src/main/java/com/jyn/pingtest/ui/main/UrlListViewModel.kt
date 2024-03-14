@@ -1,7 +1,6 @@
 package com.jyn.pingtest.ui.main
 
 import android.app.Application
-import android.os.Debug
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData

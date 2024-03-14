@@ -3,6 +3,7 @@ package com.jyn.pingtest.ui.main
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
@@ -10,10 +11,14 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.jyn.pingtest.databinding.LayoutMainBinding
 import com.jyn.pingtest.ui.add.AddUrlActivity
+import com.jyn.pingtest.ui.views.ItemTouchDelegate
+import com.jyn.pingtest.ui.views.ItemTouchHelperCallback
+import com.jyn.pingtest.ui.views.ItemTouchHelperImpl
 import java.util.UUID
 
 class MainActivity : ComponentActivity() {
@@ -21,6 +26,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var binding: LayoutMainBinding
     private lateinit var listViewModel: UrlListViewModel
     private lateinit var itemsAdapter: UrlAdapter
+    private lateinit var itemTouchHelper: ItemTouchHelperImpl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,9 +40,14 @@ class MainActivity : ComponentActivity() {
         listViewModel.pingAllUrl()
     }
 
+    /**
+     * 监听数据初始化逻辑，
+     */
     private fun initDb() {
-        WorkManager.getInstance(this).getWorkInfoByIdLiveData(UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c")).observe(this){
-                if (it.state == WorkInfo.State.SUCCEEDED){
+        WorkManager.getInstance(this)
+            .getWorkInfoByIdLiveData(UUID.fromString("5fc03087-d265-11e7-b8c6-83e29cd24f4c"))
+            .observe(this) {
+                if (it.state == WorkInfo.State.SUCCEEDED) {
                     listViewModel.pingAllUrl()
                 }
             }
@@ -46,6 +57,37 @@ class MainActivity : ComponentActivity() {
         itemsAdapter = UrlAdapter()
         binding.rlvItems.layoutManager = LinearLayoutManager(this)
         binding.rlvItems.adapter = itemsAdapter
+        // 实现拖拽
+        val itemTouchCallback = ItemTouchHelperCallback(object : ItemTouchDelegate {
+
+            override fun onMove(srcPosition: Int, targetPosition: Int): Boolean {
+                //  if (mData.size > 1 && srcPosition < mData.size && targetPosition < mData.size) {
+                // 更换数据源中的数据Item的位置
+                // Collections.swap(mData, srcPosition, targetPosition)
+                // 更新UI中的Item的位置，主要是给用户看到交互效果
+                itemsAdapter.notifyItemMoved(srcPosition, targetPosition)
+                return true
+                //    }
+                //    return false
+            }
+
+            override fun uiOnDragging(viewHolder: RecyclerView.ViewHolder?) {
+                viewHolder?.itemView?.setBackgroundColor(Color.parseColor("#22000000"))
+            }
+
+            override fun uiOnClearView(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder
+            ) {
+                viewHolder.itemView.setBackgroundColor(Color.parseColor("#FFFFFF"))
+            }
+
+        })
+
+        itemTouchHelper = ItemTouchHelperImpl(itemTouchCallback)
+        itemTouchHelper.attachToRecyclerView(binding.rlvItems)
+        itemTouchCallback.setDragEnable(true)
+        itemTouchCallback.setSwipeEnable(true)
     }
 
     private fun livedataObserve() {
@@ -64,13 +106,15 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private var resultLauncher:ActivityResultLauncher<Intent> = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
-        if (result.resultCode == Activity.RESULT_OK){
-            val url = result.data?.getStringExtra("ADD_URL")
-            if (url.isNullOrEmpty()){
-                return@registerForActivityResult
+    //新增URL返回后的处理
+    private var resultLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val url = result.data?.getStringExtra("ADD_URL")
+                if (url.isNullOrEmpty()) {
+                    return@registerForActivityResult
+                }
+                listViewModel.addNewUrl(url)
             }
-            listViewModel.addNewUrl(url)
         }
-    }
 }

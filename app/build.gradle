@@ -54,6 +54,8 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
     implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
 
     //数据库，做持久化处理
     implementation "androidx.room:room-ktx:2.6.1"
