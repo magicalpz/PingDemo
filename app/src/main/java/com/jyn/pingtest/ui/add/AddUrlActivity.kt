@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.jyn.pingtest.databinding.LayoutAddUrlBinding
-import java.net.URL
 
 class AddUrlActivity : ComponentActivity() {
 
@@ -33,6 +32,7 @@ class AddUrlActivity : ComponentActivity() {
             Toast.makeText(this, "请输入域名", Toast.LENGTH_SHORT).show()
             return
         }
+        Toast.makeText(this, "添加成功", Toast.LENGTH_SHORT).show()
         setResult(Activity.RESULT_OK,intent.putExtra("ADD_URL",inputUlr))
         finish()
     }

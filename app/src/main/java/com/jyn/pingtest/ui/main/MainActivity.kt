@@ -2,23 +2,16 @@ package com.jyn.pingtest.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Application
-import android.app.Instrumentation.ActivityResult
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.jyn.pingtest.DataBaseWorker
-import com.jyn.pingtest.PingUtil
 import com.jyn.pingtest.databinding.LayoutMainBinding
 import com.jyn.pingtest.ui.add.AddUrlActivity
 import java.util.UUID

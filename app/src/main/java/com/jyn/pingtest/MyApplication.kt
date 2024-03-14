@@ -1,7 +1,6 @@
 package com.jyn.pingtest
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.work.Configuration
 import com.jyn.pingtest.data.AppDatabase
 

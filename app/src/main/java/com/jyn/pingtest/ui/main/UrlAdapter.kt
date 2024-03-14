@@ -1,9 +1,6 @@
 package com.jyn.pingtest.ui.main
 
-import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.jyn.pingtest.data.UrlDetail

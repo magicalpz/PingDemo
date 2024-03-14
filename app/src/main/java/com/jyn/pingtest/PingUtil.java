@@ -1,6 +1,5 @@
 package com.jyn.pingtest;
 
-import android.os.Debug;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -10,7 +9,7 @@ import java.io.InputStreamReader;
 
 public class PingUtil {
     public static String ping(String domain) {
-        String command = "/system/bin/ping -c 1 -w 1 "+domain;
+        String command = "/system/bin/ping -c 1 -w 1 " + domain;
         Process process = null;
         try {
             process = Runtime.getRuntime().exec(command);
@@ -21,18 +20,20 @@ public class PingUtil {
             StringBuilder sb = new StringBuilder();
             boolean success = false;
             while (null != (line = reader.readLine())) {
-                sb.append(line);
-               if (line.contains("time=")){
-                   int startIndex = line.indexOf("time=");
-                   int endIndex = line.indexOf("ms");
-                   delayString = line.substring(startIndex+5,endIndex);
-                   success = true;
-                   break;
-               }
+                if (line.contains("packet loss")) {
+                    sb.append(line);
+                }
+                if (line.contains("time=")) {
+                    int startIndex = line.indexOf("time=");
+                    int endIndex = line.indexOf("ms");
+                    delayString = line.substring(startIndex + 5, endIndex);
+                    success = true;
+                    break;
+                }
             }
             reader.close();
             is.close();
-            return success?delayString: sb.toString();
+            return success ? delayString : sb.toString();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
