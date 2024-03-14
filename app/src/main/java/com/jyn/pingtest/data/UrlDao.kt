@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface UrlDao {
 
     @Insert
-    fun insertUrl(item: UrlDetail)
+    fun insertUrl(item: UrlDetail): Long
 
     @Insert
     fun insertUrlList(items: List<UrlDetail>)
@@ -20,5 +20,5 @@ interface UrlDao {
     fun deleteUrlItem(item: UrlDetail)
 
     @Query("select * from url_detail order by position asc, id asc")
-    fun getAllUrlItems():MutableList<UrlDetail>
+    fun getAllUrlItems(): MutableList<UrlDetail>
 }

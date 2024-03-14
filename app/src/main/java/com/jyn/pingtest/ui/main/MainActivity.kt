@@ -101,6 +101,7 @@ class MainActivity : ComponentActivity() {
 
     private fun livedataObserve() {
         listViewModel.urlsLiveData.observe(this) {
+            Log.d("jyntest", "列表更新" + it)
             itemsAdapter.setList(it?.toMutableList() ?: mutableListOf())
         }
     }

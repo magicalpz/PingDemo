@@ -1,10 +1,12 @@
 package com.jyn.pingtest.ui.main
 
 import android.app.Application
+import android.os.Debug
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.jyn.pingtest.PingUtil
 import com.jyn.pingtest.data.AppDatabase
 import com.jyn.pingtest.data.UrlDetail
 import kotlinx.coroutines.Dispatchers
@@ -23,11 +25,11 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             val urls = AppDatabase.getInstance(getApplication()).urlDao().getAllUrlItems()
             urlsLiveData.postValue(urls)
-            urlsLiveData.value?.forEachIndexed { index, urlDetail ->
+            urls.forEachIndexed { index, urlDetail ->
                 viewModelScope.launch(Dispatchers.IO) {
-                    val newData = getPingResult(urlDetail)
-                    urlsLiveData.value?.toMutableList()?.set(index, newData)
-                    urlsLiveData.postValue(urlsLiveData.value)
+                    val speed = PingUtil.ping(urlDetail.url)
+                    urlDetail.speed = speed
+                    urlsLiveData.postValue(urls)
                 }
             }
         }
@@ -36,25 +38,16 @@ class UrlListViewModel(private val application: Application) : AndroidViewModel(
     fun addNewUrl(url: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val urlDetail = UrlDetail(url = url, position = urlsLiveData.value?.size ?: 0)
-            AppDatabase.getInstance(application).urlDao().insertUrl(urlDetail)
+            val id = AppDatabase.getInstance(application).urlDao().insertUrl(urlDetail)
+            urlDetail.id = id.toInt()
             val currentList: MutableList<UrlDetail> =
                 urlsLiveData.value?.toMutableList() ?: mutableListOf()
             currentList.add(urlDetail)
             urlsLiveData.postValue(currentList)
-            val newData = getPingResult(urlDetail)
-            urlsLiveData.value?.toMutableList()?.set(newData.position, newData)
-            urlsLiveData.postValue(urlsLiveData.value)
+            val speed = PingUtil.ping(urlDetail.url)
+            urlDetail.speed = speed
+            urlsLiveData.postValue(currentList)
         }
-    }
-
-    /**
-     * 获取Ping的解析结果
-     * 耗时操作，放在协程中并发处理
-     */
-    private fun getPingResult(urlDetail: UrlDetail): UrlDetail {
-        val speed = com.jyn.pingtest.PingUtil.ping(urlDetail.url)
-        urlDetail.speed = speed
-        return urlDetail
     }
 
 

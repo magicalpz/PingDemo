@@ -10,5 +10,6 @@ data class UrlDetail(
     var position: Int,
     var url: String,
 ) {
-    @Ignore var speed: String = "0ms"
+    @Ignore
+    var speed: String = "0"
 }
