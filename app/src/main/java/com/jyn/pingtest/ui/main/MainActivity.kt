@@ -2,6 +2,8 @@ package com.jyn.pingtest.ui.main
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -74,9 +76,23 @@ class MainActivity : ComponentActivity() {
         binding.rlvItems.adapter = itemsAdapter
         binding.rlvItems.setRightClickListener(object : SlideRecyclerView.OnRightClickListener {
             override fun onRightClick(position: Int) {
-                //左滑删除操作
-                itemsAdapter.removePositionItem(position)
-                listViewModel.deleteItemByPosition(position)
+                AlertDialog.Builder(this@MainActivity)
+                    .setTitle("提示")
+                    .setMessage("是否确认删除")
+                    .setPositiveButton(
+                        "删除"
+                    ) { dialog, which ->
+                        dialog.dismiss()
+                        //左滑删除操作
+                        binding.rlvItems.closeMenu()
+                        itemsAdapter.removePositionItem(position)
+                        listViewModel.deleteItemByPosition(position)
+                    }
+                    .setNegativeButton(
+                        "取消"
+                    ) { dialog, which -> dialog.dismiss() }
+                    .show()
+
             }
         })
         // 实现拖拽

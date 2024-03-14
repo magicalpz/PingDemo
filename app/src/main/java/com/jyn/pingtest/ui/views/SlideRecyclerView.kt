@@ -71,9 +71,7 @@ class SlideRecyclerView : RecyclerView {
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyle: Int) : super(
-        context,
-        attrs,
-        defStyle
+        context, attrs, defStyle
     ) {
 
         mContext = context
@@ -133,14 +131,6 @@ class SlideRecyclerView : RecyclerView {
                     mItemDelete = viewHolder.binding.delete
                     mItemDelete?.setOnClickListener {
                         if (mRightListener != null) {
-                            //删除先复位
-                            if (mLastItemLayout != null && mMoveWidth > 0) {
-                                //将Item右移，恢复原位
-                                scrollRight(mLastItemLayout, 0 - mMoveWidth)
-                                //清空变量
-                                mHiddenWidth = 0
-                                mMoveWidth = 0
-                            }
                             //删除
                             mRightListener?.onRightClick(curSelectPosition)
                         }
@@ -200,7 +190,17 @@ class SlideRecyclerView : RecyclerView {
                 invalidate()
             }
         }
+    }
 
+    fun closeMenu() {
+        //删除先复位
+        if (mLastItemLayout != null && mMoveWidth > 0) {
+            //将Item右移，恢复原位
+            scrollRight(mLastItemLayout, 0 - mMoveWidth)
+            //清空变量
+            mHiddenWidth = 0
+            mMoveWidth = 0
+        }
     }
 
     /**
